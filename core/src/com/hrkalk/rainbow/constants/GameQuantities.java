@@ -7,13 +7,16 @@ public class GameQuantities {
 	private static final float[] ballspeedBuffer = new float[2];
 
 	public static final float PLATFORM_SPEED = RainbowShooterGame.V_WIDTH;
-	public static final float BORDER_SAFE_WIDTH = 100;
+	public static final float BORDER_SAFE_WIDTH = 50;
 	public static final float UPGRADE_WIDTH = 10;
 	public static final int BLOCKS_HEIGHT = 5;
 
 	public static final float MAX_BALL_SPEED = 70;
 	public static final float MIN_BALL_SPEED = 20;
 	public static final float MAX_TOTAL_ANGLE = 5f / 6f * MathUtils.PI;
+
+	public static final float UPGRADE_SIZE = 8;
+	public static final float CHANCE_ON_UPGRADE = .2f;
 
 	/**
 	 * returns random movement, moving upwards

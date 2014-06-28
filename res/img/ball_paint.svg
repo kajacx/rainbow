@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="32"
+   height="32"
+   id="svg2"
+   inkscape:label="Pozadí"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="ball_paint.svg"
+   inkscape:export-filename="C:\kajacx\programming\other\libgdx\rainbow\desktop\bin\res\img\ball_paint.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs3" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="15.839192"
+     inkscape:cx="10.62469"
+     inkscape:cy="16.457388"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1304"
+     inkscape:window-height="745"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata6">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Vrstva 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-1020.3622)">
+    <rect
+       style="fill:#00ff00;fill-opacity:1;stroke:none"
+       id="rect2984"
+       width="32.052124"
+       height="32.133751"
+       x="-0.044642705"
+       y="1020.1545" />
+    <path
+       style="fill:#ffffff;fill-opacity:0.12831858;stroke:#ff0000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 15.72327,1020.9338 c 8.563108,0.016 16.023941,1.9848 16.049857,11.1859 0.02592,9.2012 -10.167824,19.691 -16.270476,19.6225 -6.1026516,-0.068 -15.17808649,-10.3561 -15.07508092,-18.9202 0.10300557,-8.5641 6.73258922,-11.9048 15.29569992,-11.8882 z"
+       id="path3754"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="zzzzz"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#ffffff;fill-opacity:0.16371681;stroke:#ff0000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 15.763604,1021.6162 c 7.631777,0.015 14.281165,1.8912 14.304262,10.6587 0.0231,8.7675 -8.935695,17.9422 -14.374617,17.8769 -5.438923,-0.065 -13.653576,-9.0473 -13.5617739,-17.2077 0.091803,-8.1605 6.0003485,-11.3437 13.6321289,-11.3279 z"
+       id="path3754-0"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="zzzzz"
+       inkscape:export-filename="C:\kajacx\programming\other\libgdx\rainbow\res\img\path3754-1-7-4.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#ffffff;fill-opacity:0.19469027;stroke:#ff0000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 16.374074,1022.8322 c 6.581529,0.012 11.730111,4.3437 11.589238,10.6335 -0.140872,6.2899 -7.346634,14.2725 -12.51627,14.3754 -5.169637,0.1021 -11.3131542,-8.5091 -11.3676159,-14.2086 -0.054463,-5.6993 5.713119,-10.8126 12.2946479,-10.8003 z"
+       id="path3754-1"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="zzzzz"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#ffffff;fill-opacity:0.23451327;stroke:#ff0000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 15.648085,1024.552 c 5.234467,0.012 9.795133,1.4154 9.810975,7.9768 0.01585,6.5614 -6.08913,13.663 -9.819566,13.6141 -3.730436,-0.049 -9.4043473,-7.0062 -9.3413822,-13.1133 0.062966,-6.1072 4.1155062,-8.4894 9.3499732,-8.4776 z"
+       id="path3754-0-9"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="zzzzz"
+       inkscape:export-filename="C:\kajacx\programming\other\libgdx\rainbow\res\img\path3754-1-7-4.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#ffffff;fill-opacity:0.2699115;stroke:#ff0000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 15.963936,1025.8743 c 4.265361,0.021 7.221836,2.5897 7.134877,8.3304 -0.08696,5.7407 -5.129678,9.4618 -7.214784,9.3785 -2.085105,-0.083 -7.7948522,-3.9091 -7.8157401,-9.0841 -0.020888,-5.175 3.6302871,-8.6458 7.8956471,-8.6248 z"
+       id="path3754-1-7"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="zzzzz"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:#ffffff;fill-opacity:0.30973452;stroke:#ff0000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 15.961205,1028.0851 c 3.380759,0.021 4.49458,3.1028 4.446162,6.1774 -0.04842,3.0748 -2.272241,5.7244 -4.552918,5.7761 -2.280679,0.053 -4.454608,-2.588 -4.502484,-5.7545 -0.04788,-3.1667 1.228484,-6.2198 4.60924,-6.199 z"
+       id="path3754-1-7-4"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="zzzzz"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+  </g>
+</svg>

@@ -18,14 +18,16 @@ import com.hrkalk.rainbow.RainbowShooterGame;
 import com.hrkalk.rainbow.constants.BitMasks;
 import com.hrkalk.rainbow.constants.GameQuantities;
 import com.hrkalk.rainbow.game.Blocks;
-import com.hrkalk.rainbow.game.CustomPair;
 import com.hrkalk.rainbow.game.MyContactListener;
 import com.hrkalk.rainbow.game.MyContactListener.ContactAction;
 import com.hrkalk.rainbow.game.ParticleFactory;
 import com.hrkalk.rainbow.game.Platform;
-import com.hrkalk.rainbow.particles.Ball;
-import com.hrkalk.rainbow.particles.FallingBall;
-import com.hrkalk.rainbow.particles.UpgradeParticle;
+import com.hrkalk.rainbow.worldobjects.Ball;
+import com.hrkalk.rainbow.worldobjects.FallSensor;
+import com.hrkalk.rainbow.worldobjects.FallingBall;
+import com.hrkalk.rainbow.worldobjects.UpgradeParticle;
+import com.hrkalk.rainbow.worldobjects.Wall;
+import com.hrkalk.rainbow.worldobjects.WorldObject;
 
 public class Play implements State {
 
@@ -67,41 +69,9 @@ public class Play implements State {
 		factory = new ParticleFactory(world);
 		blocks = new Blocks(world);
 
+		// the first ball
 		factory.createBall(50, 50, 50, 40, new Color(.8f, .6f, .4f, 1));
 
-		// TEST -----------------------
-
-		/*for (int i = 0; i < 10; i++) {
-			System.out
-					.println(Arrays.toString(GameQuantities.randomBallMove()));
-		}*/
-
-		/*BodyDef bDef = new BodyDef();
-		bDef.type = BodyType.DynamicBody;
-		bDef.position.x = 50;
-		bDef.position.y = 50;
-		bDef.bullet = true;
-		Body body = world.createBody(bDef);
-
-		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(.5f, .5f);
-
-		FixtureDef fDef = new FixtureDef();
-		fDef.filter.categoryBits = BitMasks.PARTICLE;
-		fDef.filter.maskBits = BitMasks.BLOCK | BitMasks.FALL_SENSOR
-				| BitMasks.PLATFORM | BitMasks.WALL;
-		fDef.shape = shape;
-		fDef.restitution = 1;
-		fDef.friction = 0;
-
-		body.createFixture(fDef).setUserData(
-				new CustomPair(CustomPair.BALL, "TestBall"));
-
-		body.applyForceToCenter(80000, 120000, true);
-
-		shape.dispose();*/
-
-		// END TEST -----------------------
 	}
 
 	private void createArrays() {
@@ -119,14 +89,14 @@ public class Play implements State {
 
 	private void createPlatform() {
 
-		// actual platform
-		platform = new Platform();
-
-		// now the world object
+		// world object
 		BodyDef bDef = new BodyDef();
 		bDef.type = BodyType.KinematicBody;
 
 		platformBody = world.createBody(bDef);
+
+		// actual platform
+		platform = new Platform(platformBody);
 
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox(10, 10);
@@ -139,7 +109,7 @@ public class Play implements State {
 		fDef.friction = 0;
 
 		Fixture fixture = platformBody.createFixture(fDef);
-		fixture.setUserData(new CustomPair(CustomPair.PLATFORM, platform));
+		fixture.setUserData(platform);
 
 	}
 
@@ -160,8 +130,8 @@ public class Play implements State {
 		world.setContactListener(contactListener);
 
 		// collect fallen particles
-		contactListener.addListener(CustomPair.PARTICLE,
-				CustomPair.FALL_SENSOR, new ContactAction() {
+		contactListener.addListener(BitMasks.C_PARTICLE,
+				BitMasks.C_FALL_SENSOR, new ContactAction() {
 					@Override
 					public void onContact(Fixture first, Fixture second) {
 						/*System.out.format(
@@ -175,15 +145,15 @@ public class Play implements State {
 				});
 
 		// hit blocks with balls
-		contactListener.addListener(CustomPair.BALL, CustomPair.BLOCK,
+		contactListener.addListener(BitMasks.C_BALL, BitMasks.C_BLOCK,
 				new ContactAction() {
 					@Override
 					public void onContact(Fixture first, Fixture second) {
 						float x = first.getBody().getPosition().x;
 						float y = first.getBody().getPosition().y;
 						float[] dxy = GameQuantities.randomBallMove();
-						Color c = (Color) ((CustomPair) second.getUserData())
-								.getData();
+						Color c = ((WorldObject) second.getUserData())
+								.getColor();
 						factory.enqueueFallingBallCreation(x, y, dxy[0],
 								-dxy[1], c);
 						bodiesToDestroy.add(second.getBody());
@@ -191,7 +161,7 @@ public class Play implements State {
 				});
 
 		// catch falling balls and create regular ones
-		contactListener.addListener(CustomPair.FALL_BALL, CustomPair.PLATFORM,
+		contactListener.addListener(BitMasks.C_FALL_BALL, BitMasks.C_PLATFORM,
 				new ContactAction() {
 					@Override
 					public void onContact(Fixture first, Fixture second) {
@@ -199,8 +169,8 @@ public class Play implements State {
 						float x = first.getBody().getPosition().x;
 						float y = platform.getY() + platform.getHeight() + 1;
 						float[] dxy = GameQuantities.randomBallMove();
-						Color c = (Color) ((CustomPair) first.getUserData())
-								.getData();
+						Color c = ((WorldObject) first.getUserData())
+								.getColor();
 						factory.enqueueBallCreation(x, y, dxy[0], dxy[1], c);
 						// destroy ball
 						bodiesToDestroy.add(first.getBody());
@@ -208,13 +178,11 @@ public class Play implements State {
 				});
 
 		// paint platform from particles
-		contactListener.addListener(CustomPair.PARTICLE, CustomPair.PLATFORM,
+		contactListener.addListener(BitMasks.C_PARTICLE, BitMasks.C_PLATFORM,
 				new ContactAction() {
 					@Override
 					public void onContact(Fixture first, Fixture second) {
-						Color c = (Color) ((CustomPair) first.getUserData())
-								.getData();
-						platform.setColor(c);
+						platform.hit(first);
 					}
 				});
 	}
@@ -242,11 +210,10 @@ public class Play implements State {
 		shape.setAsBox(GameQuantities.BORDER_SAFE_WIDTH / 2,
 				RainbowShooterGame.V_HEIGHT / 2
 						+ GameQuantities.BORDER_SAFE_WIDTH);
-		body.createFixture(fDef).setUserData(
-				new CustomPair(CustomPair.WALL, "Left wall"));
+		body.createFixture(fDef).setUserData(new Wall(body));
 		;
 
-		// right
+		// top
 		bDef.position.x = RainbowShooterGame.V_WIDTH
 				+ GameQuantities.BORDER_SAFE_WIDTH / 2;
 		bDef.position.y = RainbowShooterGame.V_HEIGHT / 2;
@@ -255,10 +222,9 @@ public class Play implements State {
 		shape.setAsBox(GameQuantities.BORDER_SAFE_WIDTH / 2,
 				RainbowShooterGame.V_HEIGHT / 2
 						+ GameQuantities.BORDER_SAFE_WIDTH);
-		body.createFixture(fDef).setUserData(
-				new CustomPair(CustomPair.WALL, "Top wall"));
+		body.createFixture(fDef).setUserData(new Wall(body));
 
-		// top
+		// right
 		bDef.position.x = RainbowShooterGame.V_WIDTH / 2;
 		bDef.position.y = RainbowShooterGame.V_HEIGHT
 				+ GameQuantities.BORDER_SAFE_WIDTH / 2;
@@ -267,8 +233,7 @@ public class Play implements State {
 		shape.setAsBox(RainbowShooterGame.V_WIDTH / 2
 				+ GameQuantities.BORDER_SAFE_WIDTH,
 				GameQuantities.BORDER_SAFE_WIDTH / 2);
-		body.createFixture(fDef).setUserData(
-				new CustomPair(CustomPair.WALL, "Right wall"));
+		body.createFixture(fDef).setUserData(new Wall(body));
 
 		// end
 		shape.dispose();
@@ -292,8 +257,7 @@ public class Play implements State {
 		fDef.filter.maskBits = BitMasks.PARTICLE;
 		fDef.shape = shape;
 
-		body.createFixture(fDef).setUserData(
-				new CustomPair(CustomPair.FALL_SENSOR, "Sensor"));
+		body.createFixture(fDef).setUserData(new FallSensor(body));
 
 		shape.dispose();
 	}

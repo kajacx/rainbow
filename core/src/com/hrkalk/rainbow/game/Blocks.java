@@ -11,6 +11,8 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.hrkalk.rainbow.RainbowShooterGame;
 import com.hrkalk.rainbow.constants.BitMasks;
 import com.hrkalk.rainbow.constants.GameQuantities;
+import com.hrkalk.rainbow.worldobjects.Block;
+import com.hrkalk.rainbow.worldobjects.WorldObject;
 
 public class Blocks {
 
@@ -41,15 +43,15 @@ public class Blocks {
 		Fixture fixture;
 
 		for (int x = 0; x < RainbowShooterGame.V_WIDTH; x++) {
-			Color c = hsvToColor(x / (float) RainbowShooterGame.V_WIDTH, .8f,
-					.8f);
+			Color c = hsvToColor(x / (float) RainbowShooterGame.V_WIDTH, 1, 1);
 			bDef.position.x = x;
 			for (int y = 0; y < GameQuantities.BLOCKS_HEIGHT; y++) {
 				int yp = y + Y_OFFSET;
 				bDef.position.y = yp;
 				body = world.createBody(bDef);
 				fixture = body.createFixture(fDef);
-				fixture.setUserData(new CustomPair(CustomPair.BLOCK, c));
+				WorldObject wo = new Block(body, c);
+				fixture.setUserData(wo);
 				// System.out.println("adding");
 			}
 		}

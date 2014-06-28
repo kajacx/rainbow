@@ -12,6 +12,8 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.hrkalk.rainbow.constants.BitMasks;
 import com.hrkalk.rainbow.constants.GameQuantities;
+import com.hrkalk.rainbow.worldobjects.Ball;
+import com.hrkalk.rainbow.worldobjects.FallingBall;
 
 public class ParticleFactory {
 
@@ -89,8 +91,7 @@ public class ParticleFactory {
 
 		Body ret = world.createBody(bDef);
 
-		ret.createFixture(ballDef).setUserData(
-				new CustomPair(CustomPair.BALL, c));
+		ret.createFixture(ballDef).setUserData(new Ball(ret, c));
 
 		return ret;
 	}
@@ -104,8 +105,7 @@ public class ParticleFactory {
 
 		Body ret = world.createBody(bDef);
 
-		ret.createFixture(fallingBallDef).setUserData(
-				new CustomPair(CustomPair.FALL_BALL, c));
+		ret.createFixture(fallingBallDef).setUserData(new FallingBall(ret, c));
 
 		return ret;
 	}

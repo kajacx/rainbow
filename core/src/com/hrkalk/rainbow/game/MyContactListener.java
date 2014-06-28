@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.utils.Array;
+import com.hrkalk.rainbow.worldobjects.WorldObject;
 
 public class MyContactListener implements ContactListener {
 
@@ -47,8 +48,8 @@ public class MyContactListener implements ContactListener {
 			return;
 		}
 
-		int id1 = ((CustomPair) fa.getUserData()).getId();
-		int id2 = ((CustomPair) fb.getUserData()).getId();
+		int id1 = ((WorldObject) fa.getUserData()).getCId();
+		int id2 = ((WorldObject) fb.getUserData()).getCId();
 
 		for (ContactListener listener : listeners) {
 			// System.out.println("Testing");

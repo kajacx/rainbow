@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.hrkalk.rainbow.constants.DrawConst;
+import com.hrkalk.rainbow.files.TextureManager;
 import com.hrkalk.rainbow.input.MyInput;
 import com.hrkalk.rainbow.states.StateManager;
 
@@ -28,19 +29,21 @@ public class RainbowShooterGame extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		renderer = new ShapeRenderer();
 
+		TextureManager.init();
+
 		// normal
 		cam = new OrthographicCamera(V_WIDTH, V_HEIGHT);
-		cam.translate(V_WIDTH / 2, V_HEIGHT / 2);
 
 		// debug
-		/*cam = new OrthographicCamera(V_WIDTH + 2
-				* GameQuantities.BORDER_SAFE_WIDTH, V_HEIGHT + 2
-				* GameQuantities.BORDER_SAFE_WIDTH);
-		cam.translate(V_WIDTH / 2 + 0 * GameQuantities.BORDER_SAFE_WIDTH,
-				V_HEIGHT / 2 + 0 * GameQuantities.BORDER_SAFE_WIDTH);// */
+		/*float d = 2.5f;
+		cam = new OrthographicCamera(V_WIDTH + d
+				* GameQuantities.BORDER_SAFE_WIDTH, V_HEIGHT + d
+				* GameQuantities.BORDER_SAFE_WIDTH);// */
 
+		cam.translate(V_WIDTH / 2, V_HEIGHT / 2);
 		cam.update();
 
+		// apply camera
 		batch.setProjectionMatrix(cam.combined);
 		renderer.setProjectionMatrix(cam.combined);
 
