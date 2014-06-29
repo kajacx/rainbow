@@ -1,9 +1,14 @@
 package com.hrkalk.rainbow.states;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -22,6 +27,7 @@ import com.hrkalk.rainbow.game.MyContactListener;
 import com.hrkalk.rainbow.game.MyContactListener.ContactAction;
 import com.hrkalk.rainbow.game.ParticleFactory;
 import com.hrkalk.rainbow.game.Platform;
+import com.hrkalk.rainbow.upgrades.Upgrade;
 import com.hrkalk.rainbow.worldobjects.Ball;
 import com.hrkalk.rainbow.worldobjects.FallSensor;
 import com.hrkalk.rainbow.worldobjects.FallingBall;
@@ -32,7 +38,6 @@ import com.hrkalk.rainbow.worldobjects.WorldObject;
 public class Play implements State {
 
 	private Platform platform;
-	private ShapeRenderer renderer;
 
 	private Color repaintColor;
 
@@ -42,17 +47,19 @@ public class Play implements State {
 
 	private MyContactListener contactListener;
 
-	private Array<Ball> balls, ballsToDelete;
-	private Array<FallingBall> fallingBalls, fallingBallsToDelete;
-	private Array<UpgradeParticle> upgrades, upgradesToDelete;
+	private Array<Ball> balls;
+	private Array<FallingBall> fallingBalls;
+	private Array<UpgradeParticle> upgrades;
 
-	private ParticleFactory factory;
+	// naprasenej kod :3
+	public static ParticleFactory factory;
 	private Blocks blocks;
 
 	private Array<Body> bodiesToDestroy;
 
+	private Queue<UpgradeParams> upgradeQueue;
+
 	public Play() {
-		renderer = RainbowShooterGame.renderer;
 
 		world = new World(new Vector2(), false); // no gravity, don't sleep
 
@@ -69,20 +76,23 @@ public class Play implements State {
 		factory = new ParticleFactory(world);
 		blocks = new Blocks(world);
 
-		// the first ball
-		factory.createBall(50, 50, 50, 40, new Color(.8f, .6f, .4f, 1));
+		upgradeQueue = new LinkedList<UpgradeParams>();
+
+		// debug
+		for (int i = 0; i < 5; i++) {
+			// the first ball
+			balls.add(factory.createBall(50 + 20 * i, 50, 60, 40, new Color(
+					.8f, .6f, .4f, 1)));
+		}
 
 	}
 
 	private void createArrays() {
 		balls = new Array<Ball>(false, 16);
-		ballsToDelete = new Array<Ball>(false, 16);
 
 		fallingBalls = new Array<FallingBall>(false, 16);
-		fallingBallsToDelete = new Array<FallingBall>(false, 16);
 
 		upgrades = new Array<UpgradeParticle>(false, 16);
-		upgradesToDelete = new Array<UpgradeParticle>(false, 16);
 
 		bodiesToDestroy = new Array<Body>(false, 16);
 	}
@@ -134,12 +144,6 @@ public class Play implements State {
 				BitMasks.C_FALL_SENSOR, new ContactAction() {
 					@Override
 					public void onContact(Fixture first, Fixture second) {
-						/*System.out.format(
-								"Particle %s fell on fall sensor %s.\n",
-								((CustomPair) first.getUserData()).getData(),
-								((CustomPair) second.getUserData()).getData());
-						System.out.println("Sendor fall color:"
-								+ ((CustomPair) first.getUserData()).getData());// */
 						bodiesToDestroy.add(first.getBody());
 					}
 				});
@@ -156,6 +160,9 @@ public class Play implements State {
 								.getColor();
 						factory.enqueueFallingBallCreation(x, y, dxy[0],
 								-dxy[1], c);
+						dxy = GameQuantities.randomBallMove();
+						factory.enqueueRandomUpgradeWithChance(x, y, dxy[0],
+								-dxy[1], c);
 						bodiesToDestroy.add(second.getBody());
 					}
 				});
@@ -168,10 +175,11 @@ public class Play implements State {
 						// create new
 						float x = first.getBody().getPosition().x;
 						float y = platform.getY() + platform.getHeight() + 1;
-						float[] dxy = GameQuantities.randomBallMove();
+						float dx = first.getBody().getLinearVelocity().x;
+						float dy = first.getBody().getLinearVelocity().y;
 						Color c = ((WorldObject) first.getUserData())
 								.getColor();
-						factory.enqueueBallCreation(x, y, dxy[0], dxy[1], c);
+						factory.enqueueBallCreation(x, y, dx, -dy, c);
 						// destroy ball
 						bodiesToDestroy.add(first.getBody());
 					}
@@ -182,7 +190,24 @@ public class Play implements State {
 				new ContactAction() {
 					@Override
 					public void onContact(Fixture first, Fixture second) {
-						platform.hit(first);
+						((Platform) second.getUserData()).hit(first);
+					}
+				});
+
+		// catch all upgrades
+		contactListener.addListener(BitMasks.C_UPGRADE, BitMasks.C_PLATFORM,
+				new ContactAction() {
+					@Override
+					public void onContact(Fixture first, Fixture second) {
+						UpgradeParticle up = (UpgradeParticle) first
+								.getUserData();
+						UpgradeParams params = new UpgradeParams();
+						params.c = up.getColor();
+						params.f = first;
+						params.p = (Platform) second.getUserData();
+						params.u = up.getUpgrade();
+						upgradeQueue.offer(params);
+						bodiesToDestroy.add(first.getBody());
 					}
 				});
 	}
@@ -262,6 +287,26 @@ public class Play implements State {
 		shape.dispose();
 	}
 
+	private void disposeBodyContent(Body b) {
+		Array<Fixture> fixtureList = b.getFixtureList();
+		if (fixtureList.size == 0) {
+			// TODO: maybe some bug, fix it later
+			return;
+		}
+		Object data = fixtureList.first().getUserData();
+		if (data instanceof Ball) {
+			balls.removeValue((Ball) data, true);
+		} else if (data instanceof FallingBall) {
+			fallingBalls.removeValue((FallingBall) data, true);
+		} else if (data instanceof UpgradeParticle) {
+			upgrades.removeValue((UpgradeParticle) data, true);
+		} else {
+			// System.out.println("Warning: removing unknows body data: " +
+			// data);
+			// probably just blocks
+		}
+	}
+
 	@Override
 	public void processInput(float dt) {
 		platform.processInput();
@@ -269,48 +314,94 @@ public class Play implements State {
 
 	@Override
 	public void update(float dt) {
-		// update platform
-		platform.update(dt);
-		platform.setBodyPosition(platformBody);
-
-		// create new balls
-		while (factory.hasEnqueuedBalls()) {
-			factory.createEnqueuedBall();
-		}
-
-		// create new falling balls
-		while (factory.hasEnqueuedFallingBalls()) {
-			factory.createEnqueuedFallingBall();
-		}
-
-		// destroy old bodies
-		for (int i = 0; i < bodiesToDestroy.size; i++) {
-			world.destroyBody(bodiesToDestroy.get(i));
-		}
-		bodiesToDestroy.clear();
 
 		// update world
 		// world.step(dt, 6, 2);
 		world.step(RainbowShooterGame.STEP, 6, 2);
+
+		// update platform
+		platform.update(dt);
+		platform.setBodyPosition(platformBody);
+
+		// consume upgrades
+		while (!upgradeQueue.isEmpty()) {
+			UpgradeParams p = upgradeQueue.poll();
+			p.u.onHit(p.p, p.c, p.f);
+		}
+
+		// create new balls
+		while (factory.hasEnqueuedBalls()) {
+			balls.add(factory.createEnqueuedBall());
+		}
+
+		// create new falling balls
+		while (factory.hasEnqueuedFallingBalls()) {
+			fallingBalls.add(factory.createEnqueuedFallingBall());
+		}
+
+		// create upgrades
+		while (factory.hasEnqueuedUpgrades()) {
+			upgrades.add(factory.createEnqueuedUpgrade());
+		}
+
+		// destroy old bodies
+		for (int i = 0; i < bodiesToDestroy.size; i++) {
+			disposeBodyContent(bodiesToDestroy.get(i));
+			world.destroyBody(bodiesToDestroy.get(i));
+		}
+		bodiesToDestroy.clear();
+
 	}
 
 	@Override
 	public void render() {
 		// clear screen
-		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClearColor(0f, 0f, 0f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+		SpriteBatch batch = RainbowShooterGame.batch;
+		ShapeRenderer renderer = RainbowShooterGame.renderer;
+
+		// draw world
+		b2dRen.render(world, RainbowShooterGame.cam.combined);
+
+		// draw upgrades
+		batch.begin();
+		for (UpgradeParticle up : upgrades) {
+			up.render(batch);
+		}
+		batch.end();
+
+		// draw balls
+		renderer.begin(ShapeType.Filled);
+		for (Ball b : balls) {
+			b.render(renderer);
+		}
+		renderer.end();
+
+		// draw falling balls
+		renderer.begin(ShapeType.Filled);
+		for (FallingBall b : fallingBalls) {
+			b.render(renderer);
+		}
+		renderer.end();
 
 		// draw platform
 		platform.render(renderer);
 
-		// draw world
-		b2dRen.render(world, RainbowShooterGame.cam.combined);
 	}
 
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
 
+	}
+
+	private class UpgradeParams {
+		Platform p;
+		Color c;
+		Fixture f;
+		Upgrade u;
 	}
 
 }

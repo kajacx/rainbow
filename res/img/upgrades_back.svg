@@ -15,8 +15,8 @@
    inkscape:label="Pozadí"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="upgrade_repaint.svg"
-   inkscape:export-filename="C:\kajacx\programming\other\libgdx\rainbow\desktop\bin\res\img\upgrade_repaint.png"
+   sodipodi:docname="upgrades_back.svg"
+   inkscape:export-filename="C:\kajacx\programming\other\libgdx\rainbow\res\img\upgrade_scatter.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -29,8 +29,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="15.839192"
-     inkscape:cx="6.8663535"
-     inkscape:cy="15.12655"
+     inkscape:cx="15.057887"
+     inkscape:cy="17.355914"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -57,22 +57,18 @@
      id="layer1"
      transform="translate(0,-1020.3622)">
     <rect
-       style="fill:#00ff00;fill-opacity:1;stroke:none"
+       style="fill:#0000ff;fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect2984"
-       width="32.052124"
-       height="32.133751"
-       x="1.0286444"
-       y="1056.583" />
-    <path
-       style="fill:#757575;fill-opacity:1;stroke:#565656;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;fill-rule:nonzero"
-       d="m 23.984092,1021.9183 6.712215,3.7667 -9.245125,9.8596 5.572404,4.6528 -4.432595,3.8775 -15.4507574,-12.8507 5.5724064,-3.545 5.95234,3.9881 z"
-       id="path3846"
-       inkscape:connector-curvature="0" />
-    <path
-       style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.56168723;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 6.820666,1031.5372 -5.0658219,9.3059 7.8520229,-3.9883 -4.4325937,6.9794 8.1053157,-3.545 -5.6990512,7.9762 8.9918342,-5.6498 -3.039491,7.8655 8.611896,-6.0931 z"
-       id="path3848"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccccccc" />
+       width="32.388016"
+       height="32.198612"
+       x="-0.063134551"
+       y="1053.4355" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect4352"
+       width="29.610098"
+       height="29.673233"
+       x="1.3258253"
+       y="1021.4894" />
   </g>
 </svg>

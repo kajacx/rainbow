@@ -8,7 +8,8 @@ public class UpgradeFactory {
 	private Upgrade[] upgrades;
 
 	public UpgradeFactory() {
-		upgrades = new Upgrade[] { new UpgradeRepaint() };
+		upgrades = new Upgrade[] { new UpgradeRepaint(),
+				new UpgradeScatterBalls() };
 	}
 
 	public boolean testDropChance() {

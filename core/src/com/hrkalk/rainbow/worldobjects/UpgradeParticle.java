@@ -1,6 +1,6 @@
 package com.hrkalk.rainbow.worldobjects;
 
-import static com.hrkalk.rainbow.constants.GameQuantities.UPGRADE_SIZE;
+import static com.hrkalk.rainbow.constants.GameQuantities.UPGRADE_DRAW_SIZE;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -9,17 +9,18 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Transform;
 import com.hrkalk.rainbow.constants.BitMasks;
 import com.hrkalk.rainbow.files.TextureManager;
-import com.hrkalk.rainbow.game.Platform;
 import com.hrkalk.rainbow.upgrades.Upgrade;
 
-public abstract class UpgradeParticle extends WorldObject {
+public class UpgradeParticle extends WorldObject {
 
-	private Texture texture;
+	private Texture texture, back;
 	private Upgrade upgrade;
 
 	public UpgradeParticle(Body body, Color color, Upgrade upgrade) {
 		super(body, color, BitMasks.C_UPGRADE);
 		texture = TextureManager.getTexture(upgrade.getTextureId());
+		back = TextureManager.getTexture(TextureManager.UPGRADES_BACK);
+		this.upgrade = upgrade;
 	}
 
 	/**
@@ -29,19 +30,21 @@ public abstract class UpgradeParticle extends WorldObject {
 	 *            already opened batch
 	 */
 	public void render(SpriteBatch batch) {
-		batch.setColor(color);
-
 		float x = body.getTransform().vals[Transform.POS_X];
 		float y = body.getTransform().vals[Transform.POS_Y];
 
-		x -= UPGRADE_SIZE / 2;
-		y -= UPGRADE_SIZE / 2;
+		x -= UPGRADE_DRAW_SIZE / 2;
+		y -= UPGRADE_DRAW_SIZE / 2;
 
-		batch.draw(texture, x, y, UPGRADE_SIZE, UPGRADE_SIZE);
+		/*batch.setColor(Color.WHITE);
+		batch.draw(back, x, y, UPGRADE_DRAW_SIZE, UPGRADE_DRAW_SIZE);*/
+
+		batch.setColor(color);
+		batch.draw(texture, x, y, UPGRADE_DRAW_SIZE, UPGRADE_DRAW_SIZE);
 	}
 
-	public void applyUpgrade(Platform p) {
-		upgrade.onHit(p, color);
+	public Upgrade getUpgrade() {
+		return upgrade;
 	}
 
 }
