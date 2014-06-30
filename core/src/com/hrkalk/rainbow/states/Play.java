@@ -23,6 +23,7 @@ import com.hrkalk.rainbow.RainbowShooterGame;
 import com.hrkalk.rainbow.constants.BitMasks;
 import com.hrkalk.rainbow.constants.GameQuantities;
 import com.hrkalk.rainbow.game.Blocks;
+import com.hrkalk.rainbow.game.FakePlatform;
 import com.hrkalk.rainbow.game.MyContactListener;
 import com.hrkalk.rainbow.game.MyContactListener.ContactAction;
 import com.hrkalk.rainbow.game.ParticleFactory;
@@ -36,6 +37,7 @@ import com.hrkalk.rainbow.worldobjects.Wall;
 import com.hrkalk.rainbow.worldobjects.WorldObject;
 
 public class Play implements State {
+	public static Play _this;
 
 	private Platform platform;
 
@@ -51,6 +53,8 @@ public class Play implements State {
 	private Array<FallingBall> fallingBalls;
 	private Array<UpgradeParticle> upgrades;
 
+	private Array<FakePlatform> fakePlatforms;
+
 	// naprasenej kod :3
 	public static ParticleFactory factory;
 	private Blocks blocks;
@@ -59,8 +63,11 @@ public class Play implements State {
 
 	private Queue<UpgradeParams> upgradeQueue;
 
-	public Play() {
+	private BodyDef platformBDef;
+	private FixtureDef platformFDef;
 
+	public Play() {
+		_this = this;
 		world = new World(new Vector2(), false); // no gravity, don't sleep
 
 		b2dRen = new Box2DDebugRenderer();
@@ -81,7 +88,7 @@ public class Play implements State {
 		// debug
 		for (int i = 0; i < 5; i++) {
 			// the first ball
-			balls.add(factory.createBall(50 + 20 * i, 50, 60, 40, new Color(
+			balls.add(factory.createBall(50 + 20 * i, 50, 50, 40, new Color(
 					.8f, .6f, .4f, 1)));
 		}
 
@@ -95,15 +102,17 @@ public class Play implements State {
 		upgrades = new Array<UpgradeParticle>(false, 16);
 
 		bodiesToDestroy = new Array<Body>(false, 16);
+
+		fakePlatforms = new Array<FakePlatform>(true, 8);
 	}
 
 	private void createPlatform() {
 
 		// world object
-		BodyDef bDef = new BodyDef();
-		bDef.type = BodyType.KinematicBody;
+		platformBDef = new BodyDef();
+		platformBDef.type = BodyType.KinematicBody;
 
-		platformBody = world.createBody(bDef);
+		platformBody = world.createBody(platformBDef);
 
 		// actual platform
 		platform = new Platform(platformBody);
@@ -111,16 +120,29 @@ public class Play implements State {
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox(10, 10);
 
-		FixtureDef fDef = new FixtureDef();
-		fDef.shape = shape;
-		fDef.filter.categoryBits = BitMasks.PLATFORM;
-		fDef.filter.maskBits = BitMasks.PARTICLE;
-		fDef.restitution = 1;
-		fDef.friction = 0;
+		platformFDef = new FixtureDef();
+		platformFDef.shape = shape;
+		platformFDef.filter.categoryBits = BitMasks.PLATFORM;
+		platformFDef.filter.maskBits = BitMasks.PARTICLE;
+		platformFDef.restitution = 1;
+		platformFDef.friction = 0;
 
-		Fixture fixture = platformBody.createFixture(fDef);
+		Fixture fixture = platformBody.createFixture(platformFDef);
 		fixture.setUserData(platform);
 
+		// shape.dispose(); no way
+
+	}
+
+	public void createFakePlatform(Platform original, Color c, Fixture f) {
+		Body body = world.createBody(platformBDef);
+		Fixture fixture = body.createFixture(platformFDef);
+
+		FakePlatform fp = new FakePlatform(body, original, c, f);
+
+		fixture.setUserData(fp);
+
+		fakePlatforms.add(fp);
 	}
 
 	/*
@@ -144,7 +166,7 @@ public class Play implements State {
 				BitMasks.C_FALL_SENSOR, new ContactAction() {
 					@Override
 					public void onContact(Fixture first, Fixture second) {
-						bodiesToDestroy.add(first.getBody());
+						enqueueBodyDestruction(first.getBody());
 					}
 				});
 
@@ -163,7 +185,7 @@ public class Play implements State {
 						dxy = GameQuantities.randomBallMove();
 						factory.enqueueRandomUpgradeWithChance(x, y, dxy[0],
 								-dxy[1], c);
-						bodiesToDestroy.add(second.getBody());
+						enqueueBodyDestruction(second.getBody());
 					}
 				});
 
@@ -181,7 +203,7 @@ public class Play implements State {
 								.getColor();
 						factory.enqueueBallCreation(x, y, dx, -dy, c);
 						// destroy ball
-						bodiesToDestroy.add(first.getBody());
+						enqueueBodyDestruction(first.getBody());
 					}
 				});
 
@@ -207,7 +229,7 @@ public class Play implements State {
 						params.p = (Platform) second.getUserData();
 						params.u = up.getUpgrade();
 						upgradeQueue.offer(params);
-						bodiesToDestroy.add(first.getBody());
+						enqueueBodyDestruction(first.getBody());
 					}
 				});
 	}
@@ -287,6 +309,19 @@ public class Play implements State {
 		shape.dispose();
 	}
 
+	/**
+	 * safely enqueues destruction of this body, if body b is already enqueued
+	 * to be destroyed, nothing happens
+	 * 
+	 * @param b
+	 *            body to be destroyed
+	 */
+	public void enqueueBodyDestruction(Body b) {
+		if (!bodiesToDestroy.contains(b, true)) {
+			bodiesToDestroy.add(b);
+		}
+	}
+
 	private void disposeBodyContent(Body b) {
 		Array<Fixture> fixtureList = b.getFixtureList();
 		if (fixtureList.size == 0) {
@@ -318,6 +353,19 @@ public class Play implements State {
 		// update world
 		// world.step(dt, 6, 2);
 		world.step(RainbowShooterGame.STEP, 6, 2);
+
+		// update fake platforms
+		for (int i = 0; i < fakePlatforms.size; i++) {
+			FakePlatform fp = fakePlatforms.get(i);
+			fp.update(dt);
+			if (fp.shouldRemove()) {
+				fakePlatforms.removeIndex(i);
+				world.destroyBody(fp.getBody());
+				i--;
+				continue;
+			}
+			fp.setBodyPosition(fp.getBody());
+		}
 
 		// update platform
 		platform.update(dt);
@@ -386,8 +434,13 @@ public class Play implements State {
 		}
 		renderer.end();
 
+		// draw fake platforms
+		for (FakePlatform fp : fakePlatforms) {
+			fp.render();
+		}
+
 		// draw platform
-		platform.render(renderer);
+		platform.render();
 
 	}
 

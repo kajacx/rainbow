@@ -16,7 +16,10 @@ public class GameQuantities {
 
 	public static final float UPGRADE_SIZE = 6;
 	public static final float UPGRADE_DRAW_SIZE = 8;
-	public static final float CHANCE_ON_UPGRADE = .2f;
+	public static final float CHANCE_ON_UPGRADE = .1f;
+
+	public static final float FAKE_PLATFORM_LIFESPAN = 4;
+	public static final float PLATFORM_LENGHT_INC = 4;
 
 	/**
 	 * returns random movement, moving upwards

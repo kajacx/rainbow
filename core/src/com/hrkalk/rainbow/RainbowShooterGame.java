@@ -3,11 +3,9 @@ package com.hrkalk.rainbow;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.hrkalk.rainbow.constants.DrawConst;
 import com.hrkalk.rainbow.files.TextureManager;
 import com.hrkalk.rainbow.input.MyInput;
@@ -64,14 +62,14 @@ public class RainbowShooterGame extends ApplicationAdapter {
 		float delta = Gdx.graphics.getDeltaTime();
 		delta = Math.min(delta, DrawConst.MAX_DELTA);
 
-		stateManager.peek().processInput(delta);
-		stateManager.peek().update(delta);
-		stateManager.peek().render();
-
+		try {
+			stateManager.peek().processInput(delta);
+			stateManager.peek().update(delta);
+			stateManager.peek().render();
+		} catch (Throwable t) {
+			System.out.println("CATCHED EXCEPTION:");
+			t.printStackTrace(System.out);
+		}
 		// debug
-		renderer.begin(ShapeType.Line);
-		renderer.setColor(Color.CYAN);
-		renderer.rect(0, 0, V_WIDTH, V_HEIGHT);
-		renderer.end();
 	}
 }

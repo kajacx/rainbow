@@ -48,8 +48,15 @@ public class MyContactListener implements ContactListener {
 			return;
 		}
 
-		int id1 = ((WorldObject) fa.getUserData()).getCId();
-		int id2 = ((WorldObject) fb.getUserData()).getCId();
+		WorldObject wo1 = (WorldObject) fa.getUserData();
+		WorldObject wo2 = (WorldObject) fb.getUserData();
+
+		if (wo1 == null || wo2 == null) {
+			return;
+		}
+
+		int id1 = wo1.getCId();
+		int id2 = wo2.getCId();
 
 		for (ContactListener listener : listeners) {
 			// System.out.println("Testing");

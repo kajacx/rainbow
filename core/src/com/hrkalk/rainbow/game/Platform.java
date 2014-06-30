@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -27,7 +26,7 @@ public class Platform extends WorldObject {
 	private float width, height;
 
 	private FrameBuffer buffer;
-	private TextureRegion platformTexture;
+	private Texture platformTexture;
 	private OrthographicCamera cam;
 	private ShapeRenderer renderer;
 	private SpriteBatch batch;
@@ -35,16 +34,38 @@ public class Platform extends WorldObject {
 
 	private float ballPaintWidth, ballPaintHeight;
 
+	/**
+	 * For fake platform only, this constructor does nothing
+	 * 
+	 * @param body
+	 * @param c
+	 */
+	protected Platform(Body body, Platform original, Color c, Fixture f) {
+		super(body, c, BitMasks.C_PLATFORM);
+		x = f.getBody().getTransform().vals[Transform.POS_X];
+		y = original.y;
+		width = original.width;
+		height = original.height;
+		x -= width / 2;
+		color = c;
+		init();
+	}
+
 	public Platform(Body body) {
 		super(body, Color.WHITE, BitMasks.C_PLATFORM);
 		x = y = 20;
 		width = 50;
 		height = 10;
+		color = Color.WHITE;
+		init();
+	}
 
+	// common part for botch constructors
+	private void init() {
 		// set the painting buffers
 		buffer = new FrameBuffer(Format.RGBA8888, (int) width, (int) height,
 				false); // false = no depth
-		platformTexture = new TextureRegion(buffer.getColorBufferTexture());
+		platformTexture = buffer.getColorBufferTexture();
 
 		// set paint buffer camera and renderer
 		cam = new OrthographicCamera();
@@ -64,8 +85,7 @@ public class Platform extends WorldObject {
 		ballPaint = TextureManager.getTexture(TextureManager.BALL_PAINT);
 
 		// paint initial platform
-		repaint(Color.WHITE);
-
+		repaint(color);
 	}
 
 	public void processInput() {
@@ -84,7 +104,6 @@ public class Platform extends WorldObject {
 	}
 
 	public void update(float dt) {
-		// test
 		setX(x + dx * dt);
 	}
 
@@ -94,6 +113,38 @@ public class Platform extends WorldObject {
 		renderer.setColor(c);
 		renderer.rect(0, 0, width, height);
 		renderer.end();
+		buffer.end();
+	}
+
+	public void prolong(float amnt, Color c) {
+		width += amnt;
+		setX(x - amnt / 2); // bound-safe
+
+		Texture old = platformTexture;
+
+		buffer = new FrameBuffer(Format.RGBA8888, (int) width, (int) height,
+				false); // false = no depth
+		platformTexture = buffer.getColorBufferTexture();
+
+		// cam.translate(width / 2, height / 2);
+		cam.setToOrtho(true, width, height);
+		cam.update();
+
+		renderer.setProjectionMatrix(cam.combined);
+		batch.setProjectionMatrix(cam.combined);
+
+		buffer.begin();
+
+		renderer.begin(ShapeType.Filled);
+		renderer.setColor(c);
+		renderer.rect(0, 0, width, height);
+		renderer.end();
+
+		batch.begin();
+		batch.setColor(Color.WHITE);
+		batch.draw(old, amnt / 2, 0);
+		batch.end();
+
 		buffer.end();
 	}
 
@@ -144,7 +195,7 @@ public class Platform extends WorldObject {
 		this.color = color;
 	}
 
-	public void render(ShapeRenderer renderer) {
+	public void render() {
 		/*renderer.begin(ShapeType.Filled);
 		renderer.setColor(color);
 		renderer.rect(x, y, width, height);
