@@ -86,10 +86,10 @@ public class Play implements State {
 		upgradeQueue = new LinkedList<UpgradeParams>();
 
 		// debug
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 20; i++) {
 			// the first ball
-			balls.add(factory.createBall(50 + 20 * i, 50, 50, 40, new Color(
-					.8f, .6f, .4f, 1)));
+			balls.add(factory.createBall(50 + 5 * i, 50, 30, 50, new Color(.8f,
+					.6f, .4f, 1)));
 		}
 
 	}
@@ -183,9 +183,16 @@ public class Play implements State {
 						factory.enqueueFallingBallCreation(x, y, dxy[0],
 								-dxy[1], c);
 						dxy = GameQuantities.randomBallMove();
+
+						// spawn upgrade
 						factory.enqueueRandomUpgradeWithChance(x, y, dxy[0],
 								-dxy[1], c);
 						enqueueBodyDestruction(second.getBody());
+
+						// clear texture in blocks
+						x = second.getBody().getPosition().x;
+						y = second.getBody().getPosition().y;
+						blocks.erase(x, y);
 					}
 				});
 
@@ -195,12 +202,17 @@ public class Play implements State {
 					@Override
 					public void onContact(Fixture first, Fixture second) {
 						// create new
+						FallingBall fb = (FallingBall) first.getUserData();
+						if (fb.isExhausted()) {
+							// works
+							return;
+						}
+						fb.exhaust();
 						float x = first.getBody().getPosition().x;
 						float y = platform.getY() + platform.getHeight() + 1;
 						float dx = first.getBody().getLinearVelocity().x;
 						float dy = first.getBody().getLinearVelocity().y;
-						Color c = ((WorldObject) first.getUserData())
-								.getColor();
+						Color c = fb.getColor();
 						factory.enqueueBallCreation(x, y, dx, -dy, c);
 						// destroy ball
 						enqueueBodyDestruction(first.getBody());
@@ -223,11 +235,15 @@ public class Play implements State {
 					public void onContact(Fixture first, Fixture second) {
 						UpgradeParticle up = (UpgradeParticle) first
 								.getUserData();
+						if (up.isDepleted()) {
+							// already used upgrade
+							return;
+						}
 						UpgradeParams params = new UpgradeParams();
 						params.c = up.getColor();
 						params.f = first;
 						params.p = (Platform) second.getUserData();
-						params.u = up.getUpgrade();
+						params.u = up.extract();
 						upgradeQueue.offer(params);
 						enqueueBodyDestruction(first.getBody());
 					}
@@ -369,7 +385,7 @@ public class Play implements State {
 
 		// update platform
 		platform.update(dt);
-		platform.setBodyPosition(platformBody);
+		// platform.setBodyPosition(platformBody);
 
 		// consume upgrades
 		while (!upgradeQueue.isEmpty()) {
@@ -410,8 +426,8 @@ public class Play implements State {
 		SpriteBatch batch = RainbowShooterGame.batch;
 		ShapeRenderer renderer = RainbowShooterGame.renderer;
 
-		// draw world
-		b2dRen.render(world, RainbowShooterGame.cam.combined);
+		// draw blocks
+		blocks.render(batch);
 
 		// draw upgrades
 		batch.begin();
@@ -441,6 +457,9 @@ public class Play implements State {
 
 		// draw platform
 		platform.render();
+
+		// draw world
+		b2dRen.render(world, RainbowShooterGame.cam.combined);
 
 	}
 

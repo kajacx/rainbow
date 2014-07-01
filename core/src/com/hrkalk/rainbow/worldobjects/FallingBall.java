@@ -9,6 +9,16 @@ import com.hrkalk.rainbow.constants.BitMasks;
 public class FallingBall extends WorldObject {
 	private static final float size = 1;
 
+	private boolean exhausted = false;
+
+	public boolean isExhausted() {
+		return exhausted;
+	}
+
+	public void exhaust() {
+		exhausted = true;
+	}
+
 	public FallingBall(Body body, Color color) {
 		super(body, color, BitMasks.C_FALL_BALL);
 		// TODO Auto-generated constructor stub

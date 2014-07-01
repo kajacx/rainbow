@@ -12,13 +12,14 @@ public class TextureManager {
 	public static final int UPGRADES_BACK = 3;
 	public static final int UPGRADE_FAKE_PLATFORM = 4;
 	public static final int UPGRADE_LONGER = 5;
+	public static final int BLANK_PIXEL = 6;
 
 	private static final String[] names;
 
 	static {
 		names = new String[] { "ball_paint", "upgrade_repaint",
 				"upgrade_scatter", "upgrades_back", "upgrade_fake_platform",
-				"upgrade_longer" };
+				"upgrade_longer", "blank_pixel" };
 		textures = new Texture[names.length];
 	}
 

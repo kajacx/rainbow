@@ -32,6 +32,8 @@ public class Platform extends WorldObject {
 	private SpriteBatch batch;
 	private Texture ballPaint;
 
+	private Body body;
+
 	private float ballPaintWidth, ballPaintHeight;
 
 	/**
@@ -42,6 +44,7 @@ public class Platform extends WorldObject {
 	 */
 	protected Platform(Body body, Platform original, Color c, Fixture f) {
 		super(body, c, BitMasks.C_PLATFORM);
+		this.body = body;
 		x = f.getBody().getTransform().vals[Transform.POS_X];
 		y = original.y;
 		width = original.width;
@@ -53,6 +56,7 @@ public class Platform extends WorldObject {
 
 	public Platform(Body body) {
 		super(body, Color.WHITE, BitMasks.C_PLATFORM);
+		this.body = body;
 		x = y = 20;
 		width = 50;
 		height = 10;
@@ -78,6 +82,7 @@ public class Platform extends WorldObject {
 
 		batch = new SpriteBatch();
 		batch.setProjectionMatrix(cam.combined);
+		batch.enableBlending();
 		// batch.enableBlending(); // to draw transparent textures
 
 		ballPaintWidth = 12;
@@ -105,6 +110,7 @@ public class Platform extends WorldObject {
 
 	public void update(float dt) {
 		setX(x + dx * dt);
+		setBodyPosition(body);
 	}
 
 	public void repaint(Color c) {

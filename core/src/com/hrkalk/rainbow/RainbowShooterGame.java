@@ -33,7 +33,7 @@ public class RainbowShooterGame extends ApplicationAdapter {
 		cam = new OrthographicCamera(V_WIDTH, V_HEIGHT);
 
 		// debug
-		/*float d = .5f;
+		/*float d = .25f;
 		cam = new OrthographicCamera(V_WIDTH + d
 				* GameQuantities.BORDER_SAFE_WIDTH, V_HEIGHT + d
 				* GameQuantities.BORDER_SAFE_WIDTH);// */

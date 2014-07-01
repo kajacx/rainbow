@@ -13,13 +13,14 @@ import com.hrkalk.rainbow.upgrades.Upgrade;
 
 public class UpgradeParticle extends WorldObject {
 
-	private Texture texture, back;
+	private Texture texture;
 	private Upgrade upgrade;
+
+	private boolean used;
 
 	public UpgradeParticle(Body body, Color color, Upgrade upgrade) {
 		super(body, color, BitMasks.C_UPGRADE);
 		texture = TextureManager.getTexture(upgrade.getTextureId());
-		back = TextureManager.getTexture(TextureManager.UPGRADES_BACK);
 		this.upgrade = upgrade;
 	}
 
@@ -36,14 +37,20 @@ public class UpgradeParticle extends WorldObject {
 		x -= UPGRADE_DRAW_SIZE / 2;
 		y -= UPGRADE_DRAW_SIZE / 2;
 
-		/*batch.setColor(Color.WHITE);
-		batch.draw(back, x, y, UPGRADE_DRAW_SIZE, UPGRADE_DRAW_SIZE);*/
-
 		batch.setColor(color);
 		batch.draw(texture, x, y, UPGRADE_DRAW_SIZE, UPGRADE_DRAW_SIZE);
 	}
 
-	public Upgrade getUpgrade() {
+	public boolean isDepleted() {
+		return used;
+	}
+
+	public Upgrade extract() {
+		if (used) {
+			System.out.println("Warning, using used upgrade!");
+		} else {
+			used = true;
+		}
 		return upgrade;
 	}
 
