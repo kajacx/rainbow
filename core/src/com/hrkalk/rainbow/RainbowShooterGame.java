@@ -20,6 +20,8 @@ public class RainbowShooterGame extends ApplicationAdapter {
 	public static ShapeRenderer renderer;
 	public static OrthographicCamera cam;
 
+	public static int sWidth;
+
 	private StateManager stateManager;
 
 	@Override
@@ -27,13 +29,15 @@ public class RainbowShooterGame extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		renderer = new ShapeRenderer();
 
+		sWidth = Gdx.graphics.getWidth();
+
 		TextureManager.init();
 
 		// normal
 		cam = new OrthographicCamera(V_WIDTH, V_HEIGHT);
 
 		// debug
-		/*float d = .25f;
+		/*float d = .5f;
 		cam = new OrthographicCamera(V_WIDTH + d
 				* GameQuantities.BORDER_SAFE_WIDTH, V_HEIGHT + d
 				* GameQuantities.BORDER_SAFE_WIDTH);// */
@@ -72,4 +76,10 @@ public class RainbowShooterGame extends ApplicationAdapter {
 		}
 		// debug
 	}
+
+	@Override
+	public void resize(int width, int height) {
+		sWidth = width;
+	}
+
 }

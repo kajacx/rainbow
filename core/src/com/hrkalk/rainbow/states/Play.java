@@ -37,11 +37,10 @@ import com.hrkalk.rainbow.worldobjects.Wall;
 import com.hrkalk.rainbow.worldobjects.WorldObject;
 
 public class Play implements State {
+	private static final boolean DEBUG_RENDER = false;
 	public static Play _this;
 
 	private Platform platform;
-
-	private Color repaintColor;
 
 	private World world;
 	private Box2DDebugRenderer b2dRen;
@@ -86,7 +85,7 @@ public class Play implements State {
 		upgradeQueue = new LinkedList<UpgradeParams>();
 
 		// debug
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 1; i++) {
 			// the first ball
 			balls.add(factory.createBall(50 + 5 * i, 50, 30, 50, new Color(.8f,
 					.6f, .4f, 1)));
@@ -380,7 +379,7 @@ public class Play implements State {
 				i--;
 				continue;
 			}
-			fp.setBodyPosition(fp.getBody());
+			// fp.setBodyPosition(fp.getBody());
 		}
 
 		// update platform
@@ -459,7 +458,9 @@ public class Play implements State {
 		platform.render();
 
 		// draw world
-		b2dRen.render(world, RainbowShooterGame.cam.combined);
+		if (DEBUG_RENDER) {
+			b2dRen.render(world, RainbowShooterGame.cam.combined);
+		}
 
 	}
 

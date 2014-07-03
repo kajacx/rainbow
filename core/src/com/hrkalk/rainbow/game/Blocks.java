@@ -18,7 +18,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.hrkalk.rainbow.RainbowShooterGame;
 import com.hrkalk.rainbow.constants.BitMasks;
 import com.hrkalk.rainbow.constants.GameQuantities;
-import com.hrkalk.rainbow.files.TextureManager;
 import com.hrkalk.rainbow.worldobjects.Block;
 import com.hrkalk.rainbow.worldobjects.WorldObject;
 
@@ -32,7 +31,7 @@ public class Blocks {
 	private Texture platformTexture;
 	private ShapeRenderer renderer;
 	private SpriteBatch batch;
-	private Texture blankPixel;
+	// private Texture blankPixel;
 
 	private Color[] colors; // column colors
 
@@ -46,7 +45,7 @@ public class Blocks {
 	public void render(SpriteBatch sb) {
 		sb.begin();
 		sb.setColor(Color.WHITE);
-		sb.draw(platformTexture, 0, Y_OFFSET - 50);
+		sb.draw(platformTexture, 0, Y_OFFSET);
 		sb.end();
 	}
 
@@ -77,18 +76,19 @@ public class Blocks {
 		batch.disableBlending();
 
 		// now render basic
+		float off = .5f;
 		buffer.begin();
 		renderer.begin(ShapeType.Line);
 		for (int i = 0; i < RainbowShooterGame.V_WIDTH; i++) {
 			renderer.setColor(colors[i]);
-			renderer.line(i, 0, i, GameQuantities.BLOCKS_HEIGHT);
+			renderer.line(i + off, 0, i + off, GameQuantities.BLOCKS_HEIGHT);
 		}
 		/*renderer.line(RainbowShooterGame.V_WIDTH, 0,
 				RainbowShooterGame.V_WIDTH, GameQuantities.BLOCKS_HEIGHT);*/
 		renderer.end();
 		buffer.end();
 
-		blankPixel = TextureManager.getTexture(TextureManager.BLANK_PIXEL);
+		// blankPixel = TextureManager.getTexture(TextureManager.BLANK_PIXEL);
 	}
 
 	/**

@@ -50,6 +50,7 @@ public class Platform extends WorldObject {
 		width = original.width;
 		height = original.height;
 		x -= width / 2;
+		setX(x);
 		color = c;
 		init();
 	}
@@ -99,7 +100,7 @@ public class Platform extends WorldObject {
 		} else if (MyInput._this.isKeyDown(InputConst.LEFT)) {
 			dx = -GameQuantities.PLATFORM_SPEED;
 		} else {
-			dx = 0;
+			dx = GameQuantities.PLATFORM_SPEED * MyInput.getDirection();
 		}
 
 		// TODO: delete test here
@@ -110,7 +111,6 @@ public class Platform extends WorldObject {
 
 	public void update(float dt) {
 		setX(x + dx * dt);
-		setBodyPosition(body);
 	}
 
 	public void repaint(Color c) {
@@ -174,6 +174,7 @@ public class Platform extends WorldObject {
 			x = RainbowShooterGame.V_WIDTH - width;
 		}
 		this.x = x;
+		setBodyPosition(body);
 	}
 
 	public float getX() {
